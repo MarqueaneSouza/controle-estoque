@@ -1,12 +1,19 @@
-const http = require('http');
-
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Olá, Mundo!');
-});
-
+const express = require('express');
+const app = express();
 const PORT = 3000;
 
-server.listen(PORT, () => {
+app.use(express.json());
+
+const produtosRoutes = require('./routes/produtos');
+const fornecedoresRoutes = require('./routes/fornecedores');
+
+app.use('/produtos', produtosRoutes);
+app.use('/fornecedores', fornecedoresRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Servidor Node com Express funcionando!');
+});
+
+app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}/`);
 });
