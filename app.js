@@ -8,7 +8,7 @@ const produtosRoutes = require('./routes/produtos');
 const fornecedoresRoutes = require('./routes/fornecedores');
 
 app.use('/produtos', produtosRoutes);
-app.use('/fornecedores', fornecedoresRoutes);
+app.use('/fornecedores', fornecedoresRoutes.router);
 
 app.get('/', (req, res) => {
     res.send('Servidor Node com Express funcionando!');
