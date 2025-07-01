@@ -62,4 +62,24 @@ router.post('/:codigoBarras/associar', (req, res) => {
     res.json({ mensagem: 'Fornecedor associado com sucesso ao produto!' });
 });
 
+// Rota DELETE - Desassociar fornecedor de um produto
+router.delete('/:codigoBarras/desassociar', (req, res) => {
+    const { codigoBarras } = req.params;
+    const { cnpj } = req.body;
+
+    const produto = produtos.find(p => p.codigoBarras === codigoBarras);
+    if (!produto) {
+        return res.status(404).json({ mensagem: 'Produto não encontrado!' });
+    }
+
+    const fornecedorIndex = produto.fornecedores.findIndex(f => f.cnpj === cnpj);
+    if (fornecedorIndex === -1) {
+        return res.status(404).json({ mensagem: 'Fornecedor não está associado a este produto!' });
+    }
+
+    produto.fornecedores.splice(fornecedorIndex, 1);
+    res.json({ mensagem: 'Fornecedor desassociado com sucesso!' });
+});
+
+
 module.exports = router;
