@@ -1,26 +1,36 @@
-let produtos = [];
+const Produto = require('../models/Produto');
 
-const listarProdutos = (req, res) => {
-    res.json(produtos);
+const listarProdutos = async (req, res) => {
+    try {
+        const lista = await Produto.findAll();
+        res.json(lista);
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro ao listar produtos.', erro: error.message });
+    }
 };
 
-const cadastrarProduto = (req, res) => {
+const cadastrarProduto = async (req, res) => {
     const { nome, codigoBarras, descricao, quantidade, categoria } = req.body;
 
     if (!nome || !codigoBarras || !descricao || !categoria) {
         return res.status(400).json({ mensagem: 'Campos obrigatórios não preenchidos!' });
     }
 
-    const existe = produtos.find(p => p.codigoBarras === codigoBarras);
-    if (existe) {
-        return res.status(400).json({ mensagem: 'Produto com este código de barras já está cadastrado!' });
+    try {
+        const existe = await Produto.findOne({ where: { codigoBarras } });
+        if (existe) {
+            return res.status(400).json({ mensagem: 'Produto com este código de barras já está cadastrado!' });
+        }
+
+        const novoProduto = await Produto.create({ nome, codigoBarras, descricao, quantidade, categoria });
+
+        res.status(201).json({ mensagem: 'Produto cadastrado com sucesso!', produto: novoProduto });
+
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro ao cadastrar produto.', erro: error.message });
     }
-
-    const novoProduto = { nome, codigoBarras, descricao, quantidade, categoria, fornecedores: [] };
-    produtos.push(novoProduto);
-
-    res.status(201).json({ mensagem: 'Produto cadastrado com sucesso!', produto: novoProduto });
 };
+
 
 const associarFornecedor = (req, res, fornecedores) => {
     const { codigoBarras } = req.params;
@@ -67,6 +77,5 @@ module.exports = {
     listarProdutos,
     cadastrarProduto,
     associarFornecedor,
-    desassociarFornecedor,
-    produtos
+    desassociarFornecedor
 };

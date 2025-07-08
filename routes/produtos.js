@@ -10,7 +10,7 @@ const {
 
 router.get('/', listarProdutos);
 router.post('/', cadastrarProduto);
-router.post('/:codigoBarras/associar', (req, res) => associarFornecedor(req, res, fornecedores));
-router.delete('/:codigoBarras/desassociar', desassociarFornecedor);
+router.post('/, codigoBarras/associar', (req, res) => associarFornecedor(req, res, fornecedores));
+router.post('/, codigoBarras/desassociar', desassociarFornecedor);
 
 module.exports = router;
