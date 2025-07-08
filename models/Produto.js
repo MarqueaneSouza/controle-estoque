@@ -25,9 +25,4 @@ const Produto = sequelize.define('Produto', {
     }
 });
 
-// const Fornecedor = require('./Fornecedor');
-
-// Produto.belongsToMany(Fornecedor, { through: 'ProdutoFornecedores' });
-// Fornecedor.belongsToMany(Produto, { through: 'ProdutoFornecedores' });
-
 module.exports = Produto;
