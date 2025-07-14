@@ -63,23 +63,34 @@ const associarFornecedor = async (req, res) => {
 };
 
 
-const desassociarFornecedor = (req, res) => {
+const desassociarFornecedor = async (req, res) => {
     const { codigoBarras } = req.params;
     const { cnpj } = req.body;
 
-    const produto = produtos.find(p => p.codigoBarras === codigoBarras);
-    if (!produto) {
-        return res.status(404).json({ mensagem: 'Produto não encontrado!' });
-    }
+    try {
+        const produto = await Produto.findOne({ where: { codigoBarras } });
+        if (!produto) {
+            return res.status(404).json({ mensagem: 'Produto não encontrado!' });
+        }
 
-    const fornecedorIndex = produto.fornecedores.findIndex(f => f.cnpj === cnpj);
-    if (fornecedorIndex === -1) {
-        return res.status(404).json({ mensagem: 'Fornecedor não está associado a este produto!' });
-    }
+        const fornecedor = await Fornecedor.findOne({ where: { cnpj } });
+        if (!fornecedor) {
+            return res.status(404).json({ mensagem: 'Fornecedor não encontrado!' });
+        }
 
-    produto.fornecedores.splice(fornecedorIndex, 1);
-    res.json({ mensagem: 'Fornecedor desassociado com sucesso!' });
+        const associados = await produto.getFornecedors({ where: { id: fornecedor.id } });
+        if (associados.length === 0) {
+            return res.status(400).json({ mensagem: 'Fornecedor não está associado a este produto!' });
+        }
+
+        await produto.removeFornecedor(fornecedor);
+        res.json({ mensagem: 'Fornecedor desassociado com sucesso do produto!' });
+
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro ao desassociar fornecedor.', erro: error.message });
+    }
 };
+
 
 module.exports = {
     listarProdutos,

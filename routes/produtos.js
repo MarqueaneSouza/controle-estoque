@@ -13,4 +13,5 @@ router.post('/', cadastrarProduto);
 router.post('/:codigoBarras/associar', associarFornecedor);
 router.delete('/:codigoBarras/desassociar', desassociarFornecedor);
 
+
 module.exports = router;
