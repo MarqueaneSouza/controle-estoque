@@ -1,4 +1,5 @@
 const Produto = require('../models/Produto');
+const Fornecedor = require('../models/Fornecedor');
 
 const listarProdutos = async (req, res) => {
     try {
@@ -32,28 +33,35 @@ const cadastrarProduto = async (req, res) => {
 };
 
 
-const associarFornecedor = (req, res, fornecedores) => {
+const associarFornecedor = async (req, res) => {
     const { codigoBarras } = req.params;
     const { cnpj } = req.body;
 
-    const produto = produtos.find(p => p.codigoBarras === codigoBarras);
-    if (!produto) {
-        return res.status(404).json({ mensagem: 'Produto não encontrado!' });
-    }
+    try {
+        const produto = await Produto.findOne({ where: { codigoBarras } });
+        if (!produto) {
+            return res.status(404).json({ mensagem: 'Produto não encontrado!' });
+        }
 
-    const fornecedor = fornecedores.find(f => f.cnpj === cnpj);
-    if (!fornecedor) {
-        return res.status(404).json({ mensagem: 'Fornecedor não encontrado!' });
-    }
+        const fornecedor = await Fornecedor.findOne({ where: { cnpj } });
+        if (!fornecedor) {
+            return res.status(404).json({ mensagem: 'Fornecedor não encontrado!' });
+        }
 
-    const jaAssociado = produto.fornecedores.find(f => f.cnpj === cnpj);
-    if (jaAssociado) {
-        return res.status(400).json({ mensagem: 'Fornecedor já está associado a este produto!' });
-    }
+        // Verifica se já está associado
+        const associados = await produto.getFornecedors({ where: { id: fornecedor.id } });
+        if (associados.length > 0) {
+            return res.status(400).json({ mensagem: 'Fornecedor já está associado a este produto!' });
+        }
 
-    produto.fornecedores.push(fornecedor);
-    res.json({ mensagem: 'Fornecedor associado com sucesso!' });
+        await produto.addFornecedor(fornecedor);
+        res.json({ mensagem: 'Fornecedor associado com sucesso ao produto!' });
+
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro ao associar fornecedor.', erro: error.message });
+    }
 };
+
 
 const desassociarFornecedor = (req, res) => {
     const { codigoBarras } = req.params;
