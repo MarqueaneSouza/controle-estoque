@@ -1,0 +1,24 @@
+.lista-produtos {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.lista-produtos h1 {
+  margin-bottom: 20px;
+}
+
+.lista-produtos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lista-produtos th,
+.lista-produtos td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.lista-produtos th {
+  background-color: #f0f0f0;
+}
