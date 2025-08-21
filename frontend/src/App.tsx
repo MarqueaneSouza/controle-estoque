@@ -9,6 +9,8 @@ function App() {
       <Route path="/" element={<ListaProdutos />} />
       <Route path="/produtos/novo" element={<CadastroProduto />} />
       <Route path="/fornecedores/novo" element={<CadastroFornecedor />} />
+      <Route path="/cadastro-produto" element={<CadastroProduto />} />
+
     </Routes>
   );
 }
