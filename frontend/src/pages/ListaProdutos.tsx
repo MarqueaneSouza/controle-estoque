@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import '../styles/ListaProdutos.css';
+import { Link } from 'react-router-dom';
+
+interface Fornecedor {
+  nomeEmpresa: string;
+}
 
 interface Produto {
   id: number;
@@ -9,6 +14,7 @@ interface Produto {
   descricao: string;
   quantidade: number;
   categoria: string;
+  Fornecedores: Fornecedor[]; // <- Adiciona isso aqui
 }
 
 const ListaProdutos = () => {
@@ -23,6 +29,11 @@ const ListaProdutos = () => {
   return (
     <div className="tabela-container">
       <h2>Lista de Produtos</h2>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <Link to="/fornecedores/desassociar">Desassociar Fornecedor</Link>
+           </div>
+
       <table>
         <thead>
           <tr>
@@ -31,8 +42,11 @@ const ListaProdutos = () => {
             <th>Descrição</th>
             <th>Quantidade</th>
             <th>Categoria</th>
+            <th>Fornecedores</th>
           </tr>
         </thead>
+
+        
         <tbody>
           {produtos.map(produto => (
             <tr key={produto.id}>
@@ -41,6 +55,11 @@ const ListaProdutos = () => {
               <td>{produto.descricao}</td>
               <td>{produto.quantidade}</td>
               <td>{produto.categoria}</td>
+              <td>
+                {produto.Fornecedores && produto.Fornecedores.length > 0
+                  ? produto.Fornecedores.map(f => f.nomeEmpresa).join(', ')
+                  : 'Sem fornecedor'}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -2,13 +2,21 @@ const Produto = require('../models/Produto');
 const Fornecedor = require('../models/Fornecedor');
 
 const listarProdutos = async (req, res) => {
-    try {
-        const lista = await Produto.findAll();
-        res.json(lista);
-    } catch (error) {
-        res.status(500).json({ mensagem: 'Erro ao listar produtos.', erro: error.message });
-    }
+  try {
+    const produtos = await Produto.findAll({
+      include: {
+        model: Fornecedor,
+        as: 'Fornecedores',
+        attributes: ['nomeEmpresa'] // ou mais campos, se quiser
+      }
+    });
+    res.json(produtos);
+  } catch (error) {
+    res.status(500).json({ mensagem: 'Erro ao listar produtos.', erro: error.message });
+  }
 };
+
+
 
 const cadastrarProduto = async (req, res) => {
     const { nome, codigoBarras, descricao, quantidade, categoria } = req.body;

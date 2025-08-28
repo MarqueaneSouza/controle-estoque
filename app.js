@@ -1,39 +1,32 @@
 const express = require('express');
-const cors = require('cors'); // IMPORTA O CORS
+const cors = require('cors');
 const app = express();
-app.use(cors());
-const PORT = 3000;
-
 const sequelize = require('./config/database');
-const Produto = require('./models/Produto');
-const Fornecedor = require('./models/Fornecedor');
 
-// Executa os relacionamentos
+// Modelos (importar primeiro, mas sem associar ainda)
+require('./models/Produto');
+require('./models/Fornecedor');
+
+// Associações (depois dos modelos)
 require('./models/associacoes');
 
-// Middleware para JSON e CORS
-app.use(cors()); // ATIVA O CORS
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
 // Rotas
-const produtosRoutes = require('./routes/produtos');
-const fornecedoresRoutes = require('./routes/fornecedores');
+const rotaProdutos = require('./routes/produtos');
+const rotaFornecedores = require('./routes/fornecedores');
 
-app.use('/produtos', produtosRoutes);
-app.use('/fornecedores', fornecedoresRoutes.router);
+app.use('/produtos', rotaProdutos);
+app.use('/fornecedores', rotaFornecedores);
 
-app.get('/', (req, res) => {
-  res.send('Servidor Node com Express funcionando!');
-});
-
-// Inicia o servidor apenas uma vez após o banco sincronizar
-sequelize.sync()
-  .then(() => {
-    console.log('Banco de dados sincronizado com sucesso!');
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando em http://localhost:${PORT}/`);
-    });
-  })
-  .catch((error) => {
-    console.error('Erro ao sincronizar o banco:', error);
+// Testar conexão com banco e sincronizar modelos
+sequelize.sync().then(() => {
+  console.log('Banco de dados sincronizado.');
+  app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
   });
+}).catch((err) => {
+  console.error('Erro ao conectar com o banco de dados:', err);
+});

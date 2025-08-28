@@ -5,4 +5,4 @@ const { listarFornecedores, cadastrarFornecedor, fornecedores } = require('../co
 router.get('/', listarFornecedores);
 router.post('/', cadastrarFornecedor);
 
-module.exports = { router, fornecedores };
+module.exports = router;
