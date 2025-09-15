@@ -14,7 +14,7 @@ interface Produto {
   descricao: string;
   quantidade: number;
   categoria: string;
-  Fornecedores: Fornecedor[]; // <- Adiciona isso aqui
+  Fornecedores: Fornecedor[];
 }
 
 const ListaProdutos = () => {
@@ -22,7 +22,10 @@ const ListaProdutos = () => {
 
   useEffect(() => {
     api.get('/produtos')
-      .then(response => setProdutos(response.data))
+      .then(response => {
+        console.log('📦 Dados COMPLETOS da API:', response.data);
+        setProdutos(response.data);
+      })
       .catch(error => console.error('Erro ao buscar produtos:', error));
   }, []);
 
@@ -30,9 +33,9 @@ const ListaProdutos = () => {
     <div className="tabela-container">
       <h2>Lista de Produtos</h2>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <Link to="/fornecedores/desassociar">Desassociar Fornecedor</Link>
-           </div>
+      <div style={{ marginBottom: '1rem' }}>
+        <Link to="/fornecedores/desassociar">Desassociar Fornecedor</Link>
+      </div>
 
       <table>
         <thead>
@@ -46,12 +49,13 @@ const ListaProdutos = () => {
           </tr>
         </thead>
 
-        
         <tbody>
           {produtos.map(produto => (
             <tr key={produto.id}>
               <td>{produto.nome}</td>
-              <td>{produto.codigoBarras}</td>
+              <td style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>
+                {produto.codigoBarras}
+              </td>
               <td>{produto.descricao}</td>
               <td>{produto.quantidade}</td>
               <td>{produto.categoria}</td>

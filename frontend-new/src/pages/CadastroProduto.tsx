@@ -22,18 +22,23 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 };
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      await api.post('/produtos', formulario);
-      alert('Produto cadastrado com sucesso!');
-      navigate('/'); // redireciona para a lista
-    } catch (error) {
-      console.error('Erro ao cadastrar produto:', error);
+  try {
+    await api.post('/produtos', formulario);
+    alert('Produto cadastrado com sucesso!');
+    navigate('/');
+  } catch (error: any) {
+    console.error('Erro ao cadastrar produto:', error);
+
+    if (error.response && error.response.data && error.response.data.mensagem) {
+      alert(error.response.data.mensagem); // <- Mensagem do backend
+    } else {
       alert('Erro ao cadastrar produto.');
     }
-  };
+  }
+};
 
 
   return (

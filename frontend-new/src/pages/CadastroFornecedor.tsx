@@ -30,9 +30,14 @@ const CadastroFornecedor = () => {
       await api.post('/fornecedores', formulario);
       alert('Fornecedor cadastrado com sucesso!');
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao cadastrar fornecedor:', error);
-      alert('Erro ao cadastrar fornecedor.');
+
+      if (error.response && error.response.data && error.response.data.mensagem) {
+        alert(error.response.data.mensagem); // <- mensagem personalizada do backend
+      } else {
+        alert('Erro ao cadastrar fornecedor.');
+      }
     }
   };
 

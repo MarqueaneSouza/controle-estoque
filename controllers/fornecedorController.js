@@ -1,35 +1,40 @@
-const Fornecedor = require('../models/Fornecedor');
+const { Fornecedor } = require('../models');
 
 const listarFornecedores = async (req, res) => {
-    try {
-        const lista = await Fornecedor.findAll();
-        res.json(lista);
-    } catch (error) {
-        res.status(500).json({ mensagem: 'Erro ao listar fornecedores.', erro: error.message });
-    }
+  try {
+    const fornecedores = await Fornecedor.findAll({
+      attributes: ['id', 'nomeEmpresa', 'cnpj'] // apenas os dados necessários
+    });
+    res.json(fornecedores);
+  } catch (error) {
+    res.status(500).json({ mensagem: 'Erro ao listar fornecedores.', erro: error.message });
+  }
 };
 
 const cadastrarFornecedor = async (req, res) => {
-    const { nomeEmpresa, cnpj, endereco, telefone, email, contatoPrincipal } = req.body;
+  const { nomeEmpresa, cnpj, endereco, telefone, email, contatoPrincipal } = req.body;
 
-    if (!nomeEmpresa || !cnpj || !endereco || !telefone || !email || !contatoPrincipal) {
-        return res.status(400).json({ mensagem: 'Campos obrigatórios não preenchidos!' });
+  if (!nomeEmpresa || !cnpj || !endereco || !telefone || !email || !contatoPrincipal) {
+    return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios!' });
+  }
+
+  try {
+    const existente = await Fornecedor.findOne({ where: { cnpj } });
+    if (existente) {
+      return res.status(400).json({ mensagem: 'Fornecedor já cadastrado com este CNPJ!' });
     }
 
-    try {
-        const existe = await Fornecedor.findOne({ where: { cnpj } });
-        if (existe) {
-            return res.status(400).json({ mensagem: 'Fornecedor com esse CNPJ já está cadastrado!' });
-        }
+    const novo = await Fornecedor.create({
+      nomeEmpresa, cnpj, endereco, telefone, email, contatoPrincipal
+    });
 
-        const novoFornecedor = await Fornecedor.create({ nomeEmpresa, cnpj, endereco, telefone, email, contatoPrincipal });
-
-        res.status(201).json({ mensagem: 'Fornecedor cadastrado com sucesso!', fornecedor: novoFornecedor });
-
-    } catch (error) {
-        res.status(500).json({ mensagem: 'Erro ao cadastrar fornecedor.', erro: error.message });
-    }
+    res.status(201).json({ mensagem: 'Fornecedor cadastrado com sucesso!', fornecedor: novo });
+  } catch (error) {
+    res.status(500).json({ mensagem: 'Erro ao cadastrar fornecedor.', erro: error.message });
+  }
 };
 
-module.exports = { listarFornecedores, cadastrarFornecedor };
-
+module.exports = {
+  listarFornecedores,
+  cadastrarFornecedor
+};

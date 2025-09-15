@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../frontend-new/src/pages", "../frontend-new/src/components", "../frontend-new/src/types", "../frontend-new/src/services"]
+  "include": ["src"]
 }
