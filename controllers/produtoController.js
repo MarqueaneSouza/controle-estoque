@@ -5,7 +5,7 @@ const listarProdutos = async (req, res) => {
     const produtos = await Produto.findAll({
       include: {
         model: Fornecedor,
-        as: 'Fornecedores',
+        as: 'fornecedores',
         attributes: ['nomeEmpresa']
 
       },

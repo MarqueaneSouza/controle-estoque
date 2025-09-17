@@ -14,7 +14,7 @@ interface Produto {
   descricao: string;
   quantidade: number;
   categoria: string;
-  Fornecedores: Fornecedor[];
+  fornecedores: Fornecedor[]; // ✅ CORRIGIDO para minúsculo
 }
 
 const ListaProdutos = () => {
@@ -23,7 +23,9 @@ const ListaProdutos = () => {
   useEffect(() => {
     api.get('/produtos')
       .then(response => {
-        console.log('📦 Dados COMPLETOS da API:', response.data);
+        console.log('🔍 Dados recebidos:', response.data);
+        console.log('🔍 Primeiro produto:', response.data[0]);
+        console.log('🔍 Tem fornecedores?', response.data[0].fornecedores);
         setProdutos(response.data);
       })
       .catch(error => console.error('Erro ao buscar produtos:', error));
@@ -53,15 +55,15 @@ const ListaProdutos = () => {
           {produtos.map(produto => (
             <tr key={produto.id}>
               <td>{produto.nome}</td>
-              <td style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>
-                {produto.codigoBarras}
+              <td>
+                {produto.codigoBarras} {/* ✅ Removido estilo amarelo */}
               </td>
               <td>{produto.descricao}</td>
               <td>{produto.quantidade}</td>
               <td>{produto.categoria}</td>
               <td>
-                {produto.Fornecedores && produto.Fornecedores.length > 0
-                  ? produto.Fornecedores.map(f => f.nomeEmpresa).join(', ')
+                {produto.fornecedores && produto.fornecedores.length > 0 // ✅ minúsculo
+                  ? produto.fornecedores.map(f => f.nomeEmpresa).join(', ')
                   : 'Sem fornecedor'}
               </td>
             </tr>
